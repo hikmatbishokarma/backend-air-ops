@@ -6,7 +6,7 @@ export abstract class BaseEntity extends Document {
   @Prop({ default: false })
   status: boolean;
   @Prop({ default: () => new Date(), type: SchemaTypes.Date })
-  createdAt?: string;
+  createdAt?: Date;
 
   @Prop()
   createdBy?: string;
@@ -22,7 +22,4 @@ export abstract class BaseEntity extends Document {
 
   @Prop()
   deletedBy?: string;
-
-  // @Prop()
-  // roles?: string[];
 }

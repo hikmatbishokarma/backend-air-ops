@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/services/users.service';
+// import { UsersService } from 'src/users/services/users.service';
 import { LoginInputs } from '../inputs/login.input';
 import { comparePassword } from 'src/common/helper';
 import { loginResponseDTO } from '../dto/auth.dto';
@@ -8,14 +8,20 @@ import { loginResponseDTO } from '../dto/auth.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    // private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
 
   async signIn(username: string, pass: string): Promise<any> {
-    const [user] = await this.usersService.query({
-      filter: { name: { eq: username } },
-    });
+    // const [user] = await this.usersService.query({
+    //   filter: { name: { eq: username } },
+    // });
+
+    const user = {
+      id: '11',
+      password: 'sd',
+      name: 'nd',
+    };
     if (user?.password !== pass) {
       throw new UnauthorizedException();
     }
@@ -27,11 +33,17 @@ export class AuthService {
 
   async login({ username, password }: LoginInputs): Promise<loginResponseDTO> {
     console.log(username, password);
-    const [user] = await this.usersService.query({
-      filter: {
-        or: [{ email: { eq: username } }, { phone: { eq: username } }],
-      },
-    });
+    // const [user] = await this.usersService.query({
+    //   filter: {
+    //     or: [{ email: { eq: username } }, { phone: { eq: username } }],
+    //   },
+    // });
+    const user = {
+      id: '11',
+      password: 'sd',
+      name: 'nd',
+      roleType: 'admin',
+    };
 
     if (!user) throw new Error('User not found');
 

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { RoleType } from 'src/app-constants/enums';
+
 import { BaseEntity } from 'src/common/entities/base.entity';
 
 @Schema({ collection: 'roles' })
