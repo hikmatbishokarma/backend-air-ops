@@ -49,14 +49,24 @@ export class MongooseQueryService<Entity extends Document> {
 
   async query(
     filter: FilterQuery<Entity> = {},
-    options: { page: number; limit: number; sort?: Record<string, 1 | -1> },
+    options: { page?: number; limit?: number; sort?: Record<string, 1 | -1> },
     projection?: ProjectionType<Entity>, // Optional projection parameter
   ): Promise<Entity[]> {
-    const { page, limit, sort } = options;
+    const { page = 1, limit = 20, sort } = options;
+    // Ensure limit is greater than 0, default to 10 if not
+    const validLimit = limit > 0 ? limit : 10;
+
     return this.Model.find(filter, projection) // Apply projection
       .sort(sort || {}) // Apply sorting
-      .skip((page - 1) * limit) // Apply pagination
-      .limit(limit) // Limit results
+      .skip((page - 1) * validLimit) // Apply pagination
+      .limit(validLimit) // Limit results
       .exec();
+  }
+
+  async findWithFilter(
+    filter: FilterQuery<Entity>,
+    projection?: ProjectionType<Entity>,
+  ): Promise<Entity[] | null> {
+    return this.Model.find(filter, projection).exec();
   }
 }

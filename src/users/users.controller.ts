@@ -17,7 +17,7 @@ import { MQuery } from 'src/mongoose-query/query/query.dto';
 import { UsersService } from './users.service';
 import { UserDTO } from './dto/users.dto';
 
-@ApiTags('Usera')
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}

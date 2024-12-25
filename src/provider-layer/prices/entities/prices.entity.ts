@@ -1,6 +1,7 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { BaseEntity } from 'src/common/entities/base.entity';
 
+@Schema({ collection: 'prices', timestamps: true })
 export class PricesEntity extends BaseEntity {
   @Prop({ type: Number })
   basePrice: number;

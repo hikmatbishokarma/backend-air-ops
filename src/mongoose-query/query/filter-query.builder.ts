@@ -48,4 +48,72 @@ export class FilterQueryBuilder<DTO> {
       filter: filter || {},
     };
   }
+
+  createMongoFilter<DTO>(dto: Partial<DTO>): FilterQuery<DTO> {
+    const filter: FilterQuery<DTO> = {};
+
+    for (const key in dto) {
+      if (dto[key] !== undefined) {
+        const value = dto[key];
+
+        // Handling range filters for numbers, booleans, or dates
+        if (
+          typeof value === 'object' &&
+          value !== null &&
+          ('$gte' in value || '$lte' in value)
+        ) {
+          filter[key] = value as any; // Cast to any to bypass the type issue
+        }
+
+        // Handling string fields with regex
+        else if (typeof value === 'string') {
+          filter[key] = {
+            $regex: value,
+            $options: 'i',
+          } as any; // Cast to any to bypass the type issue
+        }
+
+        // Handling exact match filters (booleans, numbers, dates)
+        else {
+          filter[key] = value as any; // Cast to any to bypass the type issue
+        }
+      }
+    }
+
+    return filter;
+  }
 }
+
+// export function createMongoFilter<DTO>(dto: Partial<DTO>): FilterQuery<DTO> {
+//   const filter: FilterQuery<DTO> = {};
+
+//   for (const key in dto) {
+//     if (dto[key] !== undefined) {
+//       const value = dto[key];
+
+//       // Handling range filters for numbers, booleans, or dates
+//       if (
+//         typeof value === 'object' &&
+//         value !== null &&
+//         ('$gte' in value || '$lte' in value)
+//       ) {
+//         filter[key] = value as any; // Cast to any to bypass the type issue
+//       }
+
+//       // Handling string fields with regex
+//       else if (typeof value === 'string') {
+//         filter[key] = {
+//           $regex: value,
+//           $options: 'i',
+//         } as any; // Cast to any to bypass the type issue
+//       }
+
+//       // Handling exact match filters (booleans, numbers, dates)
+//       else {
+//         filter[key] = value as any; // Cast to any to bypass the type issue
+//       }
+//     }
+//   }
+
+//   return filter;
+// }

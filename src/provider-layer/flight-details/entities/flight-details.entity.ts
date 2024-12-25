@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseEntity } from 'src/common/entities/base.entity';
 
-@Schema()
+@Schema({ _id: false })
 export class Specification {
   @Prop()
   icon: string;
@@ -20,8 +20,8 @@ export class FlightDetailsEntity extends BaseEntity {
   description: string;
   @Prop()
   image: string;
-  @Prop()
-  specifications: Specification;
+  @Prop({ type: [Specification], _id: false })
+  specifications: Specification[];
 }
 
 export const FlightDetailsSchema =

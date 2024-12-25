@@ -22,6 +22,9 @@ export class FlightDetailsDTO extends BaseDTO {
   description: string;
   @ApiProperty({ description: 'Flight/Helicopter Model' })
   image: string;
-  @ApiProperty({ description: 'Flight/Helicopter Model' })
-  specifications: specificationsDTO;
+  @ApiProperty({
+    description: 'Flight/Helicopter Model',
+    type: [specificationsDTO],
+  })
+  specifications: specificationsDTO[];
 }

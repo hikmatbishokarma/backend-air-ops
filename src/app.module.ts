@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { FlightDetailsModule } from './provider-layer/flight-details/flight-details.module';
 import { PricesModule } from './provider-layer/prices/prices.module';
 import { TermsAndConditionsModule } from './provider-layer/terms-and-conditions/terms-and-conditions.module';
+import { QuotationsModule } from './consumer-layer/quotations/quotations.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { TermsAndConditionsModule } from './provider-layer/terms-and-conditions/
     FlightDetailsModule,
     PricesModule,
     TermsAndConditionsModule,
+    QuotationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

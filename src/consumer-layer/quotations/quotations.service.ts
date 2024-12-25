@@ -29,14 +29,19 @@ export class QuotationsService extends MongooseQueryService<QuotationsEntity> {
 
       const flightIds = find.map((item) => item.flight);
 
-      const flights = await this.flightDetailsService.findAll({
-        _id: { $in: flightIds },
-      });
-
-      const flightMap = flights.reduce(
-        (acc, flight) => (acc[flight._id.toString()] = flight),
-        {},
+      const flights = await this.flightDetailsService.findAll(
+        {
+          _id: { $in: flightIds },
+        },
+        { createdAt: 0, updatedAt: 0, __v: 0 },
       );
+
+      const flightMap = flights.reduce((acc, flight) => {
+        acc[flight._id.toString()] = flight;
+        return acc;
+      }, {});
+
+      console.log(flightMap);
       const result = find.map((item) => {
         const flight = flightMap[item.flight];
         return {

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
+  IsMongoId,
   IsNumber,
   IsOptional,
   IsString,
@@ -70,7 +70,7 @@ export class TaxesDTO {
   taxValue: number;
 }
 
-export class PricesDTO {
+export class QuotePricesDTO {
   @ApiProperty({ description: 'Base price', example: 100, minimum: 0 })
   @IsNumber()
   @Min(0)
@@ -102,7 +102,6 @@ export class PricesDTO {
 
   @ApiProperty({ description: 'List of taxes', type: [TaxesDTO] })
   @ValidateNested({ each: true })
-  @Type(() => TaxesDTO)
   taxes: TaxesDTO[];
 }
 
@@ -110,16 +109,18 @@ export class QuotationsDTO extends BaseDTO {
   @ApiProperty({ description: 'List of flight segments', type: [SegmentsDTO] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => SegmentsDTO)
   segments: SegmentsDTO[];
 
-  @ApiProperty({ description: 'Price details', type: PricesDTO })
-  @ValidateNested()
-  @Type(() => PricesDTO)
-  prices: PricesDTO;
+  @ApiProperty({ description: 'Price details', type: QuotePricesDTO })
+  @ValidateNested({ each: true })
+  prices: QuotePricesDTO;
 
-  @ApiProperty({ description: 'Flight details', example: 'Flight A123' })
+  @ApiProperty({
+    description: 'Flight ID (MongoDB ObjectId)',
+    example: '60c72b2f9f1b2c001c8e4a3b',
+  })
   @IsString()
+  @IsMongoId()
   flight: string;
 
   @ApiProperty({
