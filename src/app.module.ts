@@ -6,7 +6,9 @@ import config from './configs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
-import { FlightDetailsModule } from './flight-details/flight-details.module';
+import { FlightDetailsModule } from './provider-layer/flight-details/flight-details.module';
+import { PricesModule } from './provider-layer/prices/prices.module';
+import { TermsAndConditionsModule } from './provider-layer/terms-and-conditions/terms-and-conditions.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { FlightDetailsModule } from './flight-details/flight-details.module';
     RolesModule,
     UsersModule,
     FlightDetailsModule,
+    PricesModule,
+    TermsAndConditionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

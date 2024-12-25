@@ -15,5 +15,6 @@ import { FlightDetailsService } from './flight-details.service';
   ],
   controllers: [FlightDetailsController],
   providers: [FlightDetailsService],
+  exports: [FlightDetailsService],
 })
 export class FlightDetailsModule {}

@@ -8,55 +8,55 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { RolesService } from './roles.service';
 
+import { RoleDTO } from './dto/roles.dto';
 import { Query as MongoQuery } from 'src/mongoose-query/interfaces/query.inteface';
 import { FilterQueryBuilder } from 'src/mongoose-query/query/filter-query.builder';
 import { DeepPartial } from 'src/common/deep-partial.type';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { MQuery } from 'src/mongoose-query/query/query.dto';
-import { FlightDetailsDTO } from './dto/flight-details.dto';
-import { FlightDetailsService } from './flight-details.service';
 
-@ApiTags('Flight Details')
-@Controller('flight-detials')
-export class FlightDetailsController {
-  constructor(private readonly flightDetails: FlightDetailsService) {}
+@ApiTags('Roles')
+@Controller('roles')
+export class RolesController {
+  private readonly filterQueryBuilder: FilterQueryBuilder<RoleDTO>;
+  constructor(private readonly roleService: RolesService) {
+    this.filterQueryBuilder = new FilterQueryBuilder<RoleDTO>();
+  }
 
   @Get()
   async findAll() {
-    return this.flightDetails.findAll({}, {});
+    return this.roleService.findAll({}, {});
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.flightDetails.findOne({ _id: id }, { __v: 0 });
+    return this.roleService.findOne({ _id: id }, { __v: 0 });
   }
 
   @Post('create')
   @ApiBody({
-    description: 'Payload for creating a new Flight Detail',
-    type: FlightDetailsDTO,
+    description: 'Payload for creating a new role',
+    type: RoleDTO,
   })
-  async create(@Body() body: DeepPartial<FlightDetailsDTO>) {
-    return this.flightDetails.create(body);
+  async create(@Body() body: DeepPartial<RoleDTO>) {
+    return this.roleService.create(body);
   }
 
   @Put(':id')
   @ApiParam({ name: 'id', description: 'ID of the role to update' })
   @ApiBody({
     description: 'Payload for updating an existing role',
-    type: FlightDetailsDTO,
+    type: RoleDTO,
   })
-  async update(
-    @Param('id') id: string,
-    @Body() roleDTO: Partial<FlightDetailsDTO>,
-  ) {
-    return this.flightDetails.update(id, roleDTO);
+  async update(@Param('id') id: string, @Body() roleDTO: Partial<RoleDTO>) {
+    return this.roleService.update(id, roleDTO);
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    return this.flightDetails.delete(id);
+    return this.roleService.delete(id);
   }
 
   // @Get('paginate')
@@ -69,7 +69,7 @@ export class FlightDetailsController {
   // async findAllWithPagination(@Query('query') query: MongoQuery<RoleDTO>) {
   //   const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query);
 
-  //   return await this.flightDetails.query(filterQuery.filter, options);
+  //   return await this.roleService.query(filterQuery.filter, options);
   // }
 
   // @Post('paginate')
@@ -80,7 +80,7 @@ export class FlightDetailsController {
   // async findAllWithPagination(@Body() query: MQuery<RoleDTO>) {
   //   // const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query);
 
-  //   // return await this.flightDetails.query(filterQuery.filter, options);
+  //   // return await this.roleService.query(filterQuery.filter, options);
   //   return 'jh';
   // }
 }

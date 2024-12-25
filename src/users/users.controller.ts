@@ -8,55 +8,52 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { RolesService } from '../services/roles.service';
 
-import { RoleDTO } from '../dto/roles.dto';
 import { Query as MongoQuery } from 'src/mongoose-query/interfaces/query.inteface';
 import { FilterQueryBuilder } from 'src/mongoose-query/query/filter-query.builder';
 import { DeepPartial } from 'src/common/deep-partial.type';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { MQuery } from 'src/mongoose-query/query/query.dto';
+import { UsersService } from './users.service';
+import { UserDTO } from './dto/users.dto';
 
-@ApiTags('Roles')
-@Controller('roles')
-export class RolesController {
-  private readonly filterQueryBuilder: FilterQueryBuilder<RoleDTO>;
-  constructor(private readonly roleService: RolesService) {
-    this.filterQueryBuilder = new FilterQueryBuilder<RoleDTO>();
-  }
+@ApiTags('Usera')
+@Controller('users')
+export class UsersController {
+  constructor(private readonly userService: UsersService) {}
 
   @Get()
   async findAll() {
-    return this.roleService.findAll({}, {});
+    return this.userService.findAll({}, {});
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.roleService.findOne({ _id: id }, { __v: 0 });
+    return this.userService.findOne({ _id: id }, { __v: 0 });
   }
 
   @Post('create')
   @ApiBody({
-    description: 'Payload for creating a new role',
-    type: RoleDTO,
+    description: 'Payload for creating a new user',
+    type: UserDTO,
   })
-  async create(@Body() body: DeepPartial<RoleDTO>) {
-    return this.roleService.create(body);
+  async create(@Body() body: DeepPartial<UserDTO>) {
+    return this.userService.create(body);
   }
 
   @Put(':id')
-  @ApiParam({ name: 'id', description: 'ID of the role to update' })
+  @ApiParam({ name: 'id', description: 'ID of the user to update' })
   @ApiBody({
-    description: 'Payload for updating an existing role',
-    type: RoleDTO,
+    description: 'Payload for updating an existing user',
+    type: UserDTO,
   })
-  async update(@Param('id') id: string, @Body() roleDTO: Partial<RoleDTO>) {
-    return this.roleService.update(id, roleDTO);
+  async update(@Param('id') id: string, @Body() roleDTO: Partial<UserDTO>) {
+    return this.userService.update(id, roleDTO);
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    return this.roleService.delete(id);
+    return this.userService.delete(id);
   }
 
   // @Get('paginate')

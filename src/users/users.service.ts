@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UserDTO } from '../dto/users.dto';
+import { UserDTO } from './dto/users.dto';
 
-import { UserEntity } from '../entities/user.entity';
+import { UserEntity } from './entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MongooseQueryService } from 'src/mongoose-query/mongoose-query.service';

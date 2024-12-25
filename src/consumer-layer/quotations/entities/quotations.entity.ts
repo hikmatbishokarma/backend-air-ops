@@ -1,0 +1,68 @@
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { BaseEntity } from 'src/common/entities/base.entity';
+
+export class SegmentsSchema {
+  @Prop({ type: String, required: true, maxlength: 100 })
+  departure: string;
+
+  @Prop({ type: String, required: true, maxlength: 100 })
+  arrival: string;
+
+  @Prop({ type: Date, required: true })
+  etd: Date;
+
+  @Prop({ type: Date, required: true })
+  eta: Date;
+
+  @Prop({ type: Number, required: true, min: 1 })
+  noOfPax: number;
+}
+
+export class TaxesSchema {
+  @Prop({ type: String, required: true })
+  taxType: string;
+
+  @Prop({ type: Number })
+  taxPercentage?: number;
+
+  @Prop({ type: Number, required: true })
+  taxValue: number;
+}
+
+export class PricesSchema {
+  @Prop({ type: Number, required: true, min: 0 })
+  basePrice: number;
+
+  @Prop({ type: Number, required: true, min: 0 })
+  duration: number;
+
+  @Prop({ type: Number, required: true, min: 0 })
+  groundHandlingCharge: number;
+
+  @Prop({ type: Number, required: true, min: 0 })
+  crewBeltingCharge: number;
+
+  @Prop({ type: Number, required: true, min: 0 })
+  miscellaneousCharge: number;
+
+  @Prop({ type: [TaxesSchema], required: true })
+  taxes: TaxesSchema[];
+}
+
+export class QuotationsEntity extends BaseEntity {
+  @Prop({ type: String, required: true, unique: true })
+  quotationNumber: string;
+  @Prop({ type: [SegmentsSchema], required: true })
+  segments: SegmentsSchema[];
+
+  @Prop({ type: Object, required: true })
+  prices: PricesSchema;
+
+  @Prop({ type: String, required: true })
+  flight: string;
+
+  @Prop({ type: String, required: true })
+  termsAndConditions: string;
+}
+
+export const QuotationsSchema = SchemaFactory.createForClass(QuotationsEntity);

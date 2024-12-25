@@ -27,3 +27,10 @@ export async function comparePassword(
 ): Promise<boolean> {
   return compare(password, hashedPassword);
 }
+
+export function generateQuotationNumber() {
+  const prefix = 'QUO'; // Prefix for quotation numbers
+  const timestamp = Date.now().toString(36); // Base-36 timestamp for uniqueness
+  const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase(); // Random alphanumeric string
+  return `${prefix}-${timestamp}-${randomSuffix}`;
+}
