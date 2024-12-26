@@ -12,10 +12,14 @@ import { RolesService } from './roles.service';
 
 import { RoleDTO } from './dto/roles.dto';
 import { Query as MongoQuery } from 'src/mongoose-query/interfaces/query.inteface';
-import { FilterQueryBuilder } from 'src/mongoose-query/query/filter-query.builder';
+import {
+  FilterQueryBuilder,
+  MONGOOSE_SORT_DIRECTION,
+} from 'src/mongoose-query/query/filter-query.builder';
 import { DeepPartial } from 'src/common/deep-partial.type';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { MQuery } from 'src/mongoose-query/query/query.dto';
+import { ListDTO, PaginationDTO, SortDTO } from 'src/common/dtos/list.dto';
 
 @ApiTags('Roles')
 @Controller('roles')
@@ -25,13 +29,13 @@ export class RolesController {
     this.filterQueryBuilder = new FilterQueryBuilder<RoleDTO>();
   }
 
-  @Get()
-  async findAll() {
-    return this.roleService.findAll({}, {});
-  }
+  // @Get()
+  // async getMany() {
+  //   return this.roleService.findAll({}, {});
+  // }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async getOne(@Param('id') id: string) {
     return this.roleService.findOne({ _id: id }, { __v: 0 });
   }
 
@@ -59,28 +63,32 @@ export class RolesController {
     return this.roleService.delete(id);
   }
 
-  // @Get('paginate')
-  // @ApiQuery({
-  //   name: 'query',
-  //   description: 'Query object for pagination and filtering',
-  //   required: false,
-  //   type: MongoQuery<RoleDTO>, // Ensure you define or import this type properly
-  // })
-  // async findAllWithPagination(@Query('query') query: MongoQuery<RoleDTO>) {
-  //   const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query);
+  @Post()
+  async getList(@Body() query: ListDTO) {
+    const { pagination, sort, filter } = query;
 
-  //   return await this.roleService.query(filterQuery.filter, options);
-  // }
+    // Build the filter query, defaulting to an empty object if no filter is provided
+    const filterQuery = filter
+      ? this.filterQueryBuilder.createMongoFilter<RoleDTO>(filter)
+      : {};
 
-  // @Post('paginate')
-  // @ApiBody({
-  //   description: 'Query object for pagination and filtering',
-  //   type: MQuery, // Use the class here
-  // })
-  // async findAllWithPagination(@Body() query: MQuery<RoleDTO>) {
-  //   // const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query);
+    // Build the sort query, defaulting to an empty object if no sort is provided
+    const sortQuery = sort
+      ? { [sort.field]: MONGOOSE_SORT_DIRECTION[sort.order] }
+      : {};
 
-  //   // return await this.roleService.query(filterQuery.filter, options);
-  //   return 'jh';
-  // }
+    // Handle optional pagination
+    const options = {
+      page: pagination?.page,
+      limit: pagination?.perPage,
+      sort: sortQuery,
+    };
+
+    // Call the service method with the filter and options
+    const { results, total } = await this.roleService.query(
+      filterQuery,
+      options,
+    );
+    return { data: results, total };
+  }
 }

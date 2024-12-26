@@ -13,15 +13,23 @@ import { DeepPartial } from 'src/common/deep-partial.type';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { TermsAndConditionsService } from './terms-and-conditions.service';
 import { TermsAndConditionsDTO } from './dto/terms-and-coonditions.dto';
+import { ListDTO } from 'src/common/dtos/list.dto';
+import {
+  FilterQueryBuilder,
+  MONGOOSE_SORT_DIRECTION,
+} from 'src/mongoose-query/query/filter-query.builder';
 
 @ApiTags('Terms And Conditions')
 @Controller('terms-and-conditions')
 export class TermsAndConditionsController {
+  private readonly filterQueryBuilder: FilterQueryBuilder<TermsAndConditionsDTO>;
   constructor(
     private readonly termsAndConditionsService: TermsAndConditionsService,
-  ) {}
+  ) {
+    this.filterQueryBuilder = new FilterQueryBuilder<TermsAndConditionsDTO>();
+  }
 
-  @Get()
+  @Get('list')
   async findAll() {
     return this.termsAndConditionsService.findAll({}, {});
   }
@@ -59,5 +67,34 @@ export class TermsAndConditionsController {
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return this.termsAndConditionsService.delete(id);
+  }
+
+  @Post()
+  async getList(@Body() query: ListDTO) {
+    const { pagination, sort, filter } = query;
+
+    // Build the filter query, defaulting to an empty object if no filter is provided
+    const filterQuery = filter
+      ? this.filterQueryBuilder.createMongoFilter<TermsAndConditionsDTO>(filter)
+      : {};
+
+    // Build the sort query, defaulting to an empty object if no sort is provided
+    const sortQuery = sort
+      ? { [sort.field]: MONGOOSE_SORT_DIRECTION[sort.order] }
+      : {};
+
+    // Handle optional pagination
+    const options = {
+      page: pagination?.page,
+      limit: pagination?.perPage,
+      sort: sortQuery,
+    };
+
+    // Call the service method with the filter and options
+    const { results, total } = await this.termsAndConditionsService.query(
+      filterQuery,
+      options,
+    );
+    return { data: results, total };
   }
 }

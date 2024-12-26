@@ -13,13 +13,21 @@ import { DeepPartial } from 'src/common/deep-partial.type';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PricesService } from './prices.service';
 import { PricesDTO } from './dto/prices.dto';
+import {
+  FilterQueryBuilder,
+  MONGOOSE_SORT_DIRECTION,
+} from 'src/mongoose-query/query/filter-query.builder';
+import { ListDTO } from 'src/common/dtos/list.dto';
 
 @ApiTags('Prices')
 @Controller('prices')
 export class PricesController {
-  constructor(private readonly priceService: PricesService) {}
+  private readonly filterQueryBuilder: FilterQueryBuilder<PricesDTO>;
+  constructor(private readonly priceService: PricesService) {
+    this.filterQueryBuilder = new FilterQueryBuilder<PricesDTO>();
+  }
 
-  @Get()
+  @Get('list')
   async findAll() {
     return this.priceService.findAll({}, {});
   }
@@ -51,5 +59,34 @@ export class PricesController {
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return this.priceService.delete(id);
+  }
+
+  @Post()
+  async getList(@Body() query: ListDTO) {
+    const { pagination, sort, filter } = query;
+
+    // Build the filter query, defaulting to an empty object if no filter is provided
+    const filterQuery = filter
+      ? this.filterQueryBuilder.createMongoFilter<PricesDTO>(filter)
+      : {};
+
+    // Build the sort query, defaulting to an empty object if no sort is provided
+    const sortQuery = sort
+      ? { [sort.field]: MONGOOSE_SORT_DIRECTION[sort.order] }
+      : {};
+
+    // Handle optional pagination
+    const options = {
+      page: pagination?.page,
+      limit: pagination?.perPage,
+      sort: sortQuery,
+    };
+
+    // Call the service method with the filter and options
+    const { results, total } = await this.priceService.query(
+      filterQuery,
+      options,
+    );
+    return { data: results, total };
   }
 }

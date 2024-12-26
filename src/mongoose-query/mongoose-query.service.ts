@@ -49,18 +49,29 @@ export class MongooseQueryService<Entity extends Document> {
 
   async query(
     filter: FilterQuery<Entity> = {},
-    options: { page?: number; limit?: number; sort?: Record<string, 1 | -1> },
+    options?: { page?: number; limit?: number; sort?: Record<string, 1 | -1> },
     projection?: ProjectionType<Entity>, // Optional projection parameter
-  ): Promise<Entity[]> {
-    const { page = 1, limit = 20, sort } = options;
-    // Ensure limit is greater than 0, default to 10 if not
-    const validLimit = limit > 0 ? limit : 10;
+  ): Promise<{ results: Entity[]; total: number }> {
+    const { page, limit, sort } = options || {};
 
-    return this.Model.find(filter, projection) // Apply projection
-      .sort(sort || {}) // Apply sorting
-      .skip((page - 1) * validLimit) // Apply pagination
-      .limit(validLimit) // Limit results
-      .exec();
+    // Calculate total matching documents
+    const total = await this.Model.countDocuments(filter);
+
+    // Determine whether to apply pagination
+    const shouldPaginate = page !== undefined && limit !== undefined;
+
+    const query = this.Model.find(filter, projection) // Apply projection
+      .sort(sort || {}); // Apply sorting
+
+    if (shouldPaginate) {
+      const validLimit = limit > 0 ? limit : 10; // Ensure a valid limit
+      query.skip((page - 1) * validLimit).limit(validLimit); // Apply pagination
+    }
+
+    // Execute the query and return results with total
+    const results = await query.exec();
+
+    return { results, total };
   }
 
   async findWithFilter(

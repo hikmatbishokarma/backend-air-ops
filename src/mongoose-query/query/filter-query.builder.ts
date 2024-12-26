@@ -4,7 +4,7 @@ import { Query } from '../interfaces/query.inteface';
 import { SortDirection, SortField } from '../interfaces/sort-field.interface';
 import { Filter } from '../interfaces/filter.interface';
 
-const MONGOOSE_SORT_DIRECTION: Record<SortDirection, 1 | -1> = {
+export const MONGOOSE_SORT_DIRECTION: Record<SortDirection, 1 | -1> = {
   [SortDirection.ASC]: 1,
   [SortDirection.DESC]: -1,
 };
