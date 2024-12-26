@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { toJsonTransformPlugin } from 'src/mongoose-query/plugins';
 
 @Schema({ _id: false })
 export class Specification {
@@ -26,4 +27,7 @@ export class FlightDetailsEntity extends BaseEntity {
 
 export const FlightDetailsSchema =
   SchemaFactory.createForClass(FlightDetailsEntity);
+
 FlightDetailsSchema.index({ code: 1 }, { unique: true });
+// Apply the plugin
+FlightDetailsSchema.plugin(toJsonTransformPlugin);

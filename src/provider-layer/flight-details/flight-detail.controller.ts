@@ -21,7 +21,7 @@ import { FlightDetailsService } from './flight-details.service';
 import { ListDTO } from 'src/common/dtos/list.dto';
 
 @ApiTags('Flight Details')
-@Controller('flight-detials')
+@Controller('flight-details')
 export class FlightDetailsController {
   private readonly filterQueryBuilder: FilterQueryBuilder<FlightDetailsDTO>;
   constructor(private readonly flightDetails: FlightDetailsService) {
