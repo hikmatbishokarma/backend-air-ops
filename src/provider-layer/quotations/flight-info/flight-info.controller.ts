@@ -16,53 +16,50 @@ import {
 import { DeepPartial } from 'src/common/deep-partial.type';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
-import { FlightDetailsDTO } from './dto/flight-details.dto';
-import { FlightDetailsService } from './flight-details.service';
+import { FlightInfoDTO } from './dto/flight-info.dto';
+import { FlightInfoService } from './flight-info.service';
 import { ListDTO } from 'src/common/dtos/list.dto';
 
-@ApiTags('Flight Details')
-@Controller('flight-details')
-export class FlightDetailsController {
-  private readonly filterQueryBuilder: FilterQueryBuilder<FlightDetailsDTO>;
-  constructor(private readonly flightDetails: FlightDetailsService) {
-    this.filterQueryBuilder = new FilterQueryBuilder<FlightDetailsDTO>();
+@ApiTags('Flight Info')
+@Controller('flight-info')
+export class FlightInfoController {
+  private readonly filterQueryBuilder: FilterQueryBuilder<FlightInfoDTO>;
+  constructor(private readonly flightInfo: FlightInfoService) {
+    this.filterQueryBuilder = new FilterQueryBuilder<FlightInfoDTO>();
   }
 
   @Get('list')
   async findAll() {
-    return this.flightDetails.findAll({}, {});
+    return this.flightInfo.findAll({}, {});
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.flightDetails.findOne({ _id: id }, { __v: 0 });
+    return this.flightInfo.findOne({ _id: id }, { __v: 0 });
   }
 
   @Post('create')
   @ApiBody({
-    description: 'Payload for creating a new Flight Detail',
-    type: FlightDetailsDTO,
+    description: 'Payload for creating a new Flight Info',
+    type: FlightInfoDTO,
   })
-  async create(@Body() body: DeepPartial<FlightDetailsDTO>) {
-    return this.flightDetails.create(body);
+  async create(@Body() body: DeepPartial<FlightInfoDTO>) {
+    return this.flightInfo.create(body);
   }
 
   @Put(':id')
   @ApiParam({ name: 'id', description: 'ID of the role to update' })
   @ApiBody({
     description: 'Payload for updating an existing role',
-    type: FlightDetailsDTO,
+    type: FlightInfoDTO,
   })
-  async update(
-    @Param('id') id: string,
-    @Body() body: Partial<FlightDetailsDTO>,
-  ) {
-    return this.flightDetails.update(id, body);
+  async update(@Param('id') id: string, @Body() body: Partial<FlightInfoDTO>) {
+    return this.flightInfo.update(id, body);
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    return this.flightDetails.delete(id);
+    return this.flightInfo.delete(id);
   }
 
   // @Get()
@@ -82,7 +79,7 @@ export class FlightDetailsController {
   //   @Query('page') page: number = 1,
   //   @Query('limit') limit: number = 10,
   // ) {
-  //   const paginationData = await this.flightDetails.query(
+  //   const paginationData = await this.flightInfo.query(
   //     {},
   //     { page: Number(page), limit: Number(limit) },
   //   );
@@ -96,8 +93,8 @@ export class FlightDetailsController {
   // })
   // async filterResources(@Body() body: any) {
   //   const filter =
-  //     this.filterQueryBuilder.createMongoFilter<FlightDetailsDTO>(body);
-  //   return this.flightDetails.findWithFilter(filter);
+  //     this.filterQueryBuilder.createMongoFilter<FlightInfoDTO>(body);
+  //   return this.flightInfo.findWithFilter(filter);
   // }
 
   @Post()
@@ -106,7 +103,7 @@ export class FlightDetailsController {
 
     // Build the filter query, defaulting to an empty object if no filter is provided
     const filterQuery = filter
-      ? this.filterQueryBuilder.createMongoFilter<FlightDetailsDTO>(filter)
+      ? this.filterQueryBuilder.createMongoFilter<FlightInfoDTO>(filter)
       : {};
 
     // Build the sort query, defaulting to an empty object if no sort is provided
@@ -122,7 +119,7 @@ export class FlightDetailsController {
     };
 
     // Call the service method with the filter and options
-    const { results, total } = await this.flightDetails.query(
+    const { results, total } = await this.flightInfo.query(
       filterQuery,
       options,
     );

@@ -4,7 +4,7 @@ import {
   FlightDetailsEntity,
   FlightDetailsSchema,
 } from './entities/flight-details.entity';
-import { FlightDetailsController } from './flight-detail.controller';
+import { FlightDetailsController } from './flight-details.controller';
 import { FlightDetailsService } from './flight-details.service';
 
 @Module({

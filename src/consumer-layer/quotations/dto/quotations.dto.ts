@@ -47,7 +47,7 @@ export class SegmentsDTO {
 
   @ApiProperty({ description: 'Number of Passengers', example: 4, minimum: 1 })
   @IsNumber()
-  @Min(1)
+  @Min(4)
   noOfPax: number;
 }
 

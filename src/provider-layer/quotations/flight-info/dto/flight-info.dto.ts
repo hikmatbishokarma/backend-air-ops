@@ -7,7 +7,7 @@ export class specificationsDTO {
   @ApiProperty()
   name: string;
 }
-export class FlightDetailsDTO extends BaseDTO {
+export class FlightInfoDTO extends BaseDTO {
   @ApiProperty({ description: 'Flight/Helicopter Code', example: 'VTBHH' })
   code: string;
   @ApiProperty({

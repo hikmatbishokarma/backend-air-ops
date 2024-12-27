@@ -11,8 +11,8 @@ export class Specification {
   name: string;
 }
 
-@Schema({ collection: 'flight-details', timestamps: true })
-export class FlightDetailsEntity extends BaseEntity {
+@Schema({ collection: 'flight-info', timestamps: true })
+export class FlightInfoEntity extends BaseEntity {
   @Prop()
   code: string;
   @Prop()
@@ -25,9 +25,8 @@ export class FlightDetailsEntity extends BaseEntity {
   specifications: Specification[];
 }
 
-export const FlightDetailsSchema =
-  SchemaFactory.createForClass(FlightDetailsEntity);
+export const FlightInfoSchema = SchemaFactory.createForClass(FlightInfoEntity);
 
-FlightDetailsSchema.index({ code: 1 }, { unique: true });
+FlightInfoSchema.index({ code: 1 }, { unique: true });
 // Apply the plugin
-FlightDetailsSchema.plugin(toJsonTransformPlugin);
+FlightInfoSchema.plugin(toJsonTransformPlugin);

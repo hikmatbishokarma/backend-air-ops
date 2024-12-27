@@ -6,11 +6,11 @@ import {
   QuotationsEntity,
   QuotationsSchema,
 } from './entities/quotations.entity';
-import { FlightDetailsModule } from 'src/provider-layer/flight-details/flight-details.module';
+import { FlightInfoModule } from 'src/provider-layer/quotations/flight-info/flight-info.module';
 
 @Module({
   imports: [
-    FlightDetailsModule,
+    FlightInfoModule,
     MongooseModule.forFeature([
       { name: QuotationsEntity.name, schema: QuotationsSchema },
     ]),

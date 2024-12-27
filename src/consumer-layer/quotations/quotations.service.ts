@@ -4,19 +4,19 @@ import { QuotationsEntity } from './entities/quotations.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { generateQuotationNumber } from 'src/common/helper';
-import { FlightDetailsService } from 'src/provider-layer/flight-details/flight-details.service';
+import { FlightInfoService } from 'src/provider-layer/quotations/flight-info/flight-info.service';
 
 @Injectable()
 export class QuotationsService extends MongooseQueryService<QuotationsEntity> {
   constructor(
     @InjectModel(QuotationsEntity.name) model: Model<QuotationsEntity>,
-    private readonly flightDetailsService: FlightDetailsService,
+    private readonly flightInfoService: FlightInfoService,
   ) {
     super(model);
   }
 
   async createQuotation(body) {
-    const quotationNumber = generateQuotationNumber();
+    const quotationNumber = generateQuotationNumber('QUO');
     const payload = { ...body, quotationNumber };
 
     return await this.create(payload);
@@ -29,7 +29,7 @@ export class QuotationsService extends MongooseQueryService<QuotationsEntity> {
 
       const flightIds = find.map((item) => item.flight);
 
-      const flights = await this.flightDetailsService.findAll(
+      const flights = await this.flightInfoService.findAll(
         {
           _id: { $in: flightIds },
         },
@@ -41,7 +41,6 @@ export class QuotationsService extends MongooseQueryService<QuotationsEntity> {
         return acc;
       }, {});
 
-      console.log(flightMap);
       const result = find.map((item) => {
         const flight = flightMap[item.flight];
         return {

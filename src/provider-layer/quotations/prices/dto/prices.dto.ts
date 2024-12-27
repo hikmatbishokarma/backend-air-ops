@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsIn } from 'class-validator';
 import { BaseDTO } from 'src/common/dtos/base.dto';
 
 // export class TaxesDTO{
@@ -22,7 +23,7 @@ export class PricesDTO extends BaseDTO {
     example: 100,
     minimum: 0,
   })
-  groundHandlingChanrge: number;
+  groundHandlingCharge: number;
   @ApiProperty({
     description: 'Crew Belting Charge',
     default: 0,
@@ -37,5 +38,28 @@ export class PricesDTO extends BaseDTO {
     minimum: 0,
   })
   miscellaneousCharge: number;
-  // taxes:TaxesDTO[];
+
+  @ApiProperty({
+    description: 'Sort order',
+    example: ['isSGST'],
+    enum: ['isSGST', 'isCGST', 'isIGST'],
+  })
+  @IsArray()
+  @IsIn(['isSGST', 'isCGST', 'isIGST'], { each: true }) // Validates each item in the array
+  taxes: string[];
+  // @ApiProperty({
+  //   description: 'SGST @9%: 0.09',
+  //   default: false,
+  // })
+  // isSGST: boolean;
+  // @ApiProperty({
+  //   description: 'isCGST @9%: 0.09',
+  //   default: false,
+  // })
+  // isCGST: boolean;
+  // @ApiProperty({
+  //   description: '@18%: 0.18',
+  //   default: false,
+  // })
+  // isIGST: boolean;
 }
