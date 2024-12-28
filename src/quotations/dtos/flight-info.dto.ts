@@ -27,4 +27,6 @@ export class FlightInfoDTO extends BaseDTO {
     type: [specificationsDTO],
   })
   specifications: specificationsDTO[];
+  @ApiProperty({ description: 'Flights/Helicoptor Terms and Conditions' })
+  termsAndConditions: string;
 }

@@ -23,6 +23,8 @@ export class FlightInfoEntity extends BaseEntity {
   image: string;
   @Prop({ type: [Specification], _id: false })
   specifications: Specification[];
+  @Prop()
+  termsAndConditions: string;
 }
 
 export const FlightInfoSchema = SchemaFactory.createForClass(FlightInfoEntity);

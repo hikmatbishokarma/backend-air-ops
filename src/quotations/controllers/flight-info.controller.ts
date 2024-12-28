@@ -16,9 +16,10 @@ import {
 import { DeepPartial } from 'src/common/deep-partial.type';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
-import { FlightInfoDTO } from './dto/flight-info.dto';
-import { FlightInfoService } from './flight-info.service';
+import { FlightInfoDTO } from '../dtos/flight-info.dto';
+
 import { ListDTO } from 'src/common/dtos/list.dto';
+import { FlightInfoService } from '../services/flight-info.service';
 
 @ApiTags('Flight Info')
 @Controller('flight-info')

@@ -6,11 +6,9 @@ import config from './configs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
-import { FlightInfoModule } from './provider-layer/quotations/flight-info/flight-info.module';
 import { PricesModule } from './provider-layer/quotations/prices/prices.module';
-import { TermsAndConditionsModule } from './provider-layer/quotations/terms-and-conditions/terms-and-conditions.module';
-import { QuotationsModule } from './consumer-layer/quotations/quotations.module';
-import { FlightDetailsModule } from './provider-layer/operations/flight-details/flight-details.module';
+import { QuotationsModule } from './quotations/quotations.module';
+import { FlightDetailsModule } from './operations/flight-details/flight-details.module';
 
 @Module({
   imports: [
@@ -28,9 +26,7 @@ import { FlightDetailsModule } from './provider-layer/operations/flight-details/
     }),
     RolesModule,
     UsersModule,
-    FlightInfoModule,
     PricesModule,
-    TermsAndConditionsModule,
     QuotationsModule,
     FlightDetailsModule,
   ],
