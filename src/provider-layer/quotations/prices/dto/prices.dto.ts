@@ -41,11 +41,11 @@ export class PricesDTO extends BaseDTO {
 
   @ApiProperty({
     description: 'Sort order',
-    example: ['isSGST'],
-    enum: ['isSGST', 'isCGST', 'isIGST'],
+    example: ['SGST'],
+    enum: ['SGST', 'CGST', 'IGST'],
   })
   @IsArray()
-  @IsIn(['isSGST', 'isCGST', 'isIGST'], { each: true }) // Validates each item in the array
+  @IsIn(['SGST', 'CGST', 'IGST'], { each: true }) // Validates each item in the array
   taxes: string[];
   // @ApiProperty({
   //   description: 'SGST @9%: 0.09',

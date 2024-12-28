@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { RoleType } from 'src/app-constants/enums';
 
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { toJsonTransformPlugin } from 'src/mongoose-query/plugins';
 
 @Schema({ collection: 'roles' })
 export class RoleEntity extends BaseEntity {
@@ -15,6 +16,9 @@ export class RoleEntity extends BaseEntity {
 
 export const RoleSchema = SchemaFactory.createForClass(RoleEntity);
 RoleSchema.index({ roleType: 1, roleName: 1 }, { unique: true });
+
+// Apply the plugin
+RoleSchema.plugin(toJsonTransformPlugin);
 
 RoleSchema.virtual('rolePermissions', {
   ref: 'RolePermissionEntity',

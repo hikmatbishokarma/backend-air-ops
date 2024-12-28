@@ -32,6 +32,57 @@ export class PricesController {
     return this.priceService.findAll({}, {});
   }
 
+  @Get('latest')
+  async getLatestPrice() {
+    try {
+      const { results } = await this.priceService.query(
+        {},
+        { page: 1, limit: 1, sort: { updatedAt: -1 } },
+        { __v: 0 },
+      );
+
+      if (!results?.length) {
+        return null;
+      }
+      let {
+        basePrice,
+        duration,
+        groundHandlingCharge,
+        crewBeltingCharge,
+        miscellaneousCharge,
+        taxes,
+      } = results[0];
+
+      const flightCost = basePrice * duration;
+      const subTotal =
+        flightCost +
+        groundHandlingCharge +
+        crewBeltingCharge +
+        miscellaneousCharge;
+
+      const { calculatedTaxes, totalTaxes } = this.CalculateTaxes(
+        subTotal,
+        taxes,
+      );
+
+      return {
+        basePrice,
+        duration,
+        groundHandlingCharge,
+        crewBeltingCharge,
+        miscellaneousCharge,
+        taxes,
+        flightCost,
+        subTotal,
+        calculatedTaxes,
+        totalTaxes,
+        total: subTotal + totalTaxes,
+      };
+    } catch (errpr) {
+      throw new Error(errpr);
+    }
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.priceService.findOne({ _id: id }, { __v: 0 });
@@ -88,5 +139,39 @@ export class PricesController {
       options,
     );
     return { data: results, total };
+  }
+
+  private CalculateTaxes(subTotal, taxes) {
+    const allTaxTypes = ['SGST', 'CGST', 'IGST'];
+    const calculatedTaxes = [];
+    let totalTaxes = 0;
+
+    allTaxTypes.forEach((taxType) => {
+      if (taxes.includes(taxType)) {
+        let taxEntry;
+        if (taxType === 'SGST' || taxType === 'CGST') {
+          taxEntry = {
+            type: taxType,
+            percentage: 9,
+            value: subTotal * 0.09,
+          };
+        } else if (taxType === 'IGST') {
+          taxEntry = {
+            type: 'IGST',
+            percentage: 18,
+            value: subTotal * 0.18,
+          };
+        }
+        calculatedTaxes.push(taxEntry);
+        totalTaxes += taxEntry.value;
+      } else {
+        calculatedTaxes.push({
+          type: taxType,
+          percentage: taxType === 'SGST' || taxType === 'CGST' ? 9 : 18,
+          value: 'NA',
+        });
+      }
+    });
+    return { calculatedTaxes, totalTaxes };
   }
 }

@@ -1,5 +1,6 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { toJsonTransformPlugin } from 'src/mongoose-query/plugins';
 
 @Schema({ _id: false })
 export class SegmentsSchema {
@@ -70,3 +71,4 @@ export class QuotationsEntity extends BaseEntity {
 }
 
 export const QuotationsSchema = SchemaFactory.createForClass(QuotationsEntity);
+QuotationsSchema.plugin(toJsonTransformPlugin);
