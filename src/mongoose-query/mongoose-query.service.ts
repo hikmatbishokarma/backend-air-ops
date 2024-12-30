@@ -19,8 +19,13 @@ export class MongooseQueryService<Entity extends Document> {
   async findAll(
     filter: FilterQuery<Entity> = {},
     projection?: ProjectionType<Entity>, // Add optional projection parameter
+    options: { lean?: boolean } = {},
   ): Promise<Entity[]> {
-    return this.Model.find(filter, projection).exec();
+    const query = this.Model.find(filter, projection);
+    if (options.lean) {
+      query.lean();
+    }
+    return query.exec();
   }
 
   async findOne(

@@ -6,7 +6,6 @@ import config from './configs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
-import { PricesModule } from './provider-layer/quotations/prices/prices.module';
 import { QuotationsModule } from './quotations/quotations.module';
 import { FlightDetailsModule } from './operations/flight-details/flight-details.module';
 
@@ -26,7 +25,6 @@ import { FlightDetailsModule } from './operations/flight-details/flight-details.
     }),
     RolesModule,
     UsersModule,
-    PricesModule,
     QuotationsModule,
     FlightDetailsModule,
   ],

@@ -2,14 +2,17 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsDateString,
+  IsIn,
   IsMongoId,
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
+import { QuotationState, TaxType } from 'src/app-constants/enums';
 import { BaseDTO } from 'src/common/dtos/base.dto';
 
 export class SegmentsDTO {
@@ -49,12 +52,20 @@ export class SegmentsDTO {
   @IsNumber()
   @Min(4)
   noOfPax: number;
+
+  @ApiProperty({
+    description: 'Flight ID (MongoDB ObjectId)',
+    example: '60c72b2f9f1b2c001c8e4a3b',
+  })
+  @IsString()
+  @IsMongoId()
+  flight: string;
 }
 
 export class TaxesDTO {
   @ApiProperty({ description: 'Type of tax', example: 'GST' })
   @IsString()
-  taxType: string;
+  type: string;
 
   @ApiProperty({
     description: 'Percentage of tax (optional)',
@@ -63,11 +74,11 @@ export class TaxesDTO {
   })
   @IsOptional()
   @IsNumber()
-  taxPercentage?: number;
+  percentage?: number;
 
   @ApiProperty({ description: 'Value of tax', example: 180 })
   @IsNumber()
-  taxValue: number;
+  value: number;
 }
 
 export class QuotePricesDTO {
@@ -100,12 +111,43 @@ export class QuotePricesDTO {
   @Min(0)
   miscellaneousCharge: number;
 
-  @ApiProperty({ description: 'List of taxes', type: [TaxesDTO] })
-  @ValidateNested({ each: true })
-  taxes: TaxesDTO[];
+  // @ApiProperty({ description: 'List of taxes', type: [TaxesDTO] })
+  // @ValidateNested({ each: true })
+  // taxes: TaxesDTO[];
+
+  @ApiProperty({
+    description: 'Sort order',
+    example: ['SGST'],
+    enum: TaxType,
+  })
+  @IsArray()
+  @IsIn([TaxType], { each: true }) // Validates each item in the array
+  taxes: string[];
 }
 
 export class QuotationsDTO extends BaseDTO {
+  @ApiProperty({
+    description: 'quotaion code to track quotation',
+    readOnly: true,
+  })
+  code: string;
+  @ApiProperty({
+    description: 'Sort order',
+    enum: QuotationState,
+    default: QuotationState.DRAFT,
+  })
+  state: QuotationState;
+  @ApiProperty({
+    description: 'version number',
+    readOnly: true,
+  })
+  version: number;
+  @ApiProperty({
+    description: 'check if this is latest version',
+    readOnly: true,
+  })
+  isLatest: boolean;
+
   @ApiProperty({ description: 'List of flight segments', type: [SegmentsDTO] })
   @IsArray()
   @ValidateNested({ each: true })
@@ -114,19 +156,29 @@ export class QuotationsDTO extends BaseDTO {
   @ApiProperty({ description: 'Price details', type: QuotePricesDTO })
   @ValidateNested({ each: true })
   prices: QuotePricesDTO;
+}
 
+export class UpdateQuotationStateDTO {
   @ApiProperty({
-    description: 'Flight ID (MongoDB ObjectId)',
+    description: 'Quotation ID',
     example: '60c72b2f9f1b2c001c8e4a3b',
   })
   @IsString()
   @IsMongoId()
-  flight: string;
-
+  id: string;
   @ApiProperty({
-    description: 'Terms and conditions',
-    example: 'No refunds on cancellation.',
+    description: 'Quotation State to be updated',
+    enum: QuotationState,
+    default: QuotationState.DRAFT,
+  })
+  state: QuotationState;
+}
+
+export class UpgradeQuotationDTO {
+  @ApiProperty({
+    description: 'The code of the quotation to upgrade',
+    type: String,
   })
   @IsString()
-  termsAndConditions: string;
+  code: string;
 }
