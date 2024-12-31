@@ -24,6 +24,7 @@ export class SegmentsSchema {
   noOfPax: number;
 
   @Prop({ type: String, required: true })
+  // @Prop({ type: String, ref: 'flight-info', required: true }) // <-- Updated
   flight: string;
 }
 

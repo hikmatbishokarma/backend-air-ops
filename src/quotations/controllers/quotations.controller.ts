@@ -6,8 +6,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiParam,
+  ApiProperty,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { DeepPartial } from 'src/common/deep-partial.type';
 import {
   FilterQueryBuilder,
@@ -33,6 +40,17 @@ export class QuitationsController {
   @Get('list')
   async getQuotation() {
     return await this.quotationService.Quotations();
+  }
+
+  @Get('preview')
+  @ApiQuery({
+    name: 'id',
+    description: 'ID of the Quotation to preview',
+    required: true,
+  })
+  async quotationPreview(@Query('id') id: string) {
+    console.log('code', id);
+    return this.quotationService.QuotationPreview(id);
   }
 
   @Get(':id')

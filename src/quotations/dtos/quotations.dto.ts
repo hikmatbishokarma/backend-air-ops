@@ -99,7 +99,7 @@ export class QuotePricesDTO {
   })
   @IsNumber()
   @Min(0)
-  groundHandlingChanrge: number;
+  groundHandlingCharge: number;
 
   @ApiProperty({ description: 'Crew belting charge', example: 100, minimum: 0 })
   @IsNumber()

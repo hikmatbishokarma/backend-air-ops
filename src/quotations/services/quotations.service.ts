@@ -3,7 +3,7 @@ import { MongooseQueryService } from 'src/mongoose-query/mongoose-query.service'
 import { QuotationsEntity } from '../entities/quotations.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { generateQuotationNumber } from 'src/common/helper';
+import { CalculateTaxes, generateQuotationNumber } from 'src/common/helper';
 import { FlightInfoService } from './flight-info.service';
 import { QuotationState } from 'src/app-constants/enums';
 import { DeepPartial } from 'src/common/deep-partial.type';
@@ -111,6 +111,63 @@ export class QuotationsService extends MongooseQueryService<QuotationsEntity> {
       }));
 
       return result;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async QuotationPreview(id: string): Promise<any> {
+    try {
+      const find = await this.findOne({ _id: id }, { __v: 0 });
+      if (!find) throw new Error('No Quotation Found');
+
+      // Step 1: Extract unique flight IDs from segments
+      const flightMap = new Map<string, { segmentIds: string[] }>();
+
+      find.segments.forEach((segment, index) => {
+        const flightId = segment.flight;
+        if (!flightMap.has(flightId)) {
+          flightMap.set(flightId, { segmentIds: [] });
+        }
+        flightMap.get(flightId).segmentIds.push(segment.id);
+      });
+
+      // Step 2: Fetch flight details
+      const flightIds = Array.from(flightMap.keys());
+      const flights = await this.flightInfoService.findAll(
+        { _id: { $in: flightIds } },
+        { createdAt: 0, updatedAt: 0, __v: 0 },
+        { lean: true },
+      );
+
+      // Step 3: Combine flight details with segment mappings
+      const flightDetails = flights.map((flight) => ({
+        ...flight,
+        segmentIds: flightMap.get(flight._id.toString()).segmentIds,
+      }));
+
+      // calculate taxes
+      const flightCost = find.prices.basePrice * find.prices.duration;
+      const subTotal =
+        flightCost +
+        find.prices.groundHandlingCharge +
+        find.prices.crewBeltingCharge +
+        find.prices.miscellaneousCharge;
+      const { calculatedTaxes, totalTaxes } = CalculateTaxes(
+        subTotal,
+        find.prices.taxes,
+      );
+
+      find.prices['calculatedTaxes'] = calculatedTaxes;
+      find.prices['totalTaxes'] = totalTaxes;
+      find.prices['total'] = subTotal + totalTaxes;
+      find.prices['flightCost'] = flightCost;
+      find.prices['subTotal'] = subTotal;
+
+      return {
+        ...find.toObject(),
+        flightDetails,
+      };
     } catch (error) {
       throw new Error(error);
     }

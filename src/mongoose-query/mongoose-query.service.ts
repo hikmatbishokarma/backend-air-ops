@@ -9,7 +9,7 @@ import { DeepPartial } from 'src/common/deep-partial.type';
 
 @Injectable()
 export class MongooseQueryService<Entity extends Document> {
-  constructor(private readonly Model: MongooseModel<Entity>) {}
+  constructor(readonly Model: MongooseModel<Entity>) {}
 
   async create(createDto: DeepPartial<Entity>): Promise<Entity> {
     const createdEntity = new this.Model(createDto);
