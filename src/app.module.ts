@@ -8,6 +8,7 @@ import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
 import { QuotationsModule } from './quotations/quotations.module';
 import { FlightDetailsModule } from './operations/flight-details/flight-details.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FlightDetailsModule } from './operations/flight-details/flight-details.
     UsersModule,
     QuotationsModule,
     FlightDetailsModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

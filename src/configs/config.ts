@@ -1,3 +1,4 @@
+import multer from 'multer';
 import { Config } from './config.interface';
 
 const config: any = {
@@ -7,6 +8,9 @@ const config: any = {
   },
   server: {
     port: Number(process.env.PORT),
+  },
+  multer_dest: {
+    dest: process.env.MULTER_DEST,
   },
 };
 export default (): Config => config;
